@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\TaskgroupResource\Pages;
+use App\Filament\Resources\TaskgroupResource\RelationManagers;
+use App\Models\Taskgroup;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -12,11 +12,10 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\TernaryFilter;
 
-class UserResource extends Resource
+class TaskgroupResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Taskgroup::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -24,18 +23,11 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                
-                
-                Forms\Components\Toggle::make('is_admin')
-                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->maxLength(65535),
             ]);
     }
 
@@ -43,25 +35,23 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('email')
+                Tables\Columns\TextColumn::make('description')
+                    ->limit(20)
                     ->sortable()
                     ->searchable(),
-
-                //Tables\Columns\TextColumn::make('email_verified_at')->dateTime(),
-
-                Tables\Columns\ToggleColumn::make('is_admin'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/y'),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime('d/m/y'),
             ])
             ->filters([
-                TernaryFilter::make('is_admin')
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -75,7 +65,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageUsers::route('/'),
+            'index' => Pages\ManageTaskgroups::route('/'),
         ];
     }    
 }
